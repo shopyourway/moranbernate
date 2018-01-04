@@ -1,0 +1,3 @@
+<connectionStrings>
+	<add name="MySql" connectionString="Server=#MACHINE#;Port=3306;Database=#USER#;Uid=#SQLUSER#;Pwd=#SQLPASS#;use procedure bodies=false;charset=utf8" />	
+</connectionStrings>

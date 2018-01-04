@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk"> 
+   <PropertyGroup>
+    <TargetFrameworks>netstandard1.4;net45</TargetFrameworks>
+    <PackageId>OhioBox.Moranbernate</PackageId>
+    <BuildNumber>0</BuildNumber>
+    <PackageVersionSuffix>-dev</PackageVersionSuffix>
+    <AssemblyVersion>3.0.$(BuildNumber)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <PackageVersion>$(AssemblyVersion)$(PackageVersionSuffix)</PackageVersion>
+    <Authors>Sears Israel</Authors>
+    <Description>Light weight, high performance ORM for simple and robust data access for large scale applications</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/shopyourway/moranbernate</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/shopyourway/moranbernate</PackageProjectUrl>
+    <Copyright>© 2014 Sears Israel All rights reserved</Copyright>
+    <PackageTags>ORM DB Database MySQL</PackageTags>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+  </ItemGroup>
+ </Project>

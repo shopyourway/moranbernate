@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhioBox.Moranbernate", "OhioBox.Moranbernate\OhioBox.Moranbernate.csproj", "{8CF91278-EDEC-4CE4-9FF9-D32BF10EFAA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhioBox.Moranbernate.Tests", "OhioBox.Moranbernate.Tests\OhioBox.Moranbernate.Tests.csproj", "{7158EED3-4C01-46A9-BF3B-33142D409B3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CF91278-EDEC-4CE4-9FF9-D32BF10EFAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CF91278-EDEC-4CE4-9FF9-D32BF10EFAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF91278-EDEC-4CE4-9FF9-D32BF10EFAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF91278-EDEC-4CE4-9FF9-D32BF10EFAA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7158EED3-4C01-46A9-BF3B-33142D409B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7158EED3-4C01-46A9-BF3B-33142D409B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7158EED3-4C01-46A9-BF3B-33142D409B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7158EED3-4C01-46A9-BF3B-33142D409B3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
