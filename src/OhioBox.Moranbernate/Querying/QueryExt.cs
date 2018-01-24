@@ -19,7 +19,7 @@ namespace OhioBox.Moranbernate.Querying
 			return Run<T>(connection, sql, parameters, generator.GetColumns()).FirstOrDefault();
 		}
 
-		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null)
+		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null, Action<string> trackSql = null)
 			where T : class, new()
 		{
 			var countByQuery = new CountByQuery<T>();
@@ -27,6 +27,8 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = countByQuery.GetSql(restrictions, parameters);
 
+			trackSql?.Invoke(sql);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
@@ -35,30 +37,33 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null)
+		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
-			if (query != null)
-				query(builder);
+			query?.Invoke(builder);
 
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
+
+			trackSql?.Invoke(sql);
+
 			return Run<T>(connection, sql, parameters, builder.Properties);
 		}
 
-		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null)
+		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
-			if (query != null)
-				query(builder);
+			query?.Invoke(builder);
 
 			builder.RowCount();
 
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
 
+			trackSql?.Invoke(sql);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
@@ -127,7 +132,7 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		private static void HandleSetValueException<T>(string sql, List<object> parameters, IDataReader reader, IDbConnection connection, Exception ex)
+		private static void HandleSetValueException<T>(string sql, IList<object> parameters, IDataReader reader, IDbConnection connection, Exception ex)
 			where T : class, new()
 		{
 			Exception e;
