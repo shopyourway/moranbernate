@@ -10,16 +10,17 @@ namespace OhioBox.Moranbernate.Querying
 {
 	public static class QueryExt
 	{
-		public static T GetById<T>(this IDbConnection connection, object id)
+		public static T GetById<T>(this IDbConnection connection, object id, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
 			var generator = CrudOperator<T>.GetById;
 			var parameters = new List<object> { id };
 			var sql = generator.GetSql();
-			return Run<T>(connection, sql, parameters, generator.GetColumns()).FirstOrDefault();
+			
+			return Run<T>(connection, sql, parameters, generator.GetColumns(), trackSql).FirstOrDefault();
 		}
 
-		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null)
+		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
 			var countByQuery = new CountByQuery<T>();
@@ -27,6 +28,8 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = countByQuery.GetSql(restrictions, parameters);
 
+			TrackSql(sql, parameters, trackSql);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
@@ -35,30 +38,31 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null)
+		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
-			if (query != null)
-				query(builder);
+			query?.Invoke(builder);
 
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
-			return Run<T>(connection, sql, parameters, builder.Properties);
+
+			return Run<T>(connection, sql, parameters, builder.Properties, trackSql);
 		}
 
-		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null)
+		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
-			if (query != null)
-				query(builder);
+			query?.Invoke(builder);
 
 			builder.RowCount();
 
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
 
+			TrackSql(sql, parameters, trackSql);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
@@ -83,9 +87,11 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		private static IEnumerable<T> Run<T>(IDbConnection connection, string sql, List<object> parameters, IEnumerable<Property> properties)
+		private static IEnumerable<T> Run<T>(IDbConnection connection, string sql, List<object> parameters, IEnumerable<Property> properties, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
+			TrackSql(sql, parameters, trackSql);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
@@ -127,7 +133,7 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		private static void HandleSetValueException<T>(string sql, List<object> parameters, IDataReader reader, IDbConnection connection, Exception ex)
+		private static void HandleSetValueException<T>(string sql, IList<object> parameters, IDataReader reader, IDbConnection connection, Exception ex)
 			where T : class, new()
 		{
 			Exception e;
@@ -141,12 +147,33 @@ namespace OhioBox.Moranbernate.Querying
 			}
 			throw e;
 		}
+
+		private static void TrackSql(string sql, IList<object> parameters, Action<SqlDescriptor> trackSql)
+		{
+			try
+			{
+				trackSql?.Invoke(new SqlDescriptor(sql, parameters));
+			}
+			catch (Exception) { }
+		}
 	}
 
 	public class QueryResult<T>
 	{
 		public T Item { get; set; }
 		public int RowCount { get; set; }
+	}
+
+	public class SqlDescriptor
+	{
+		public string Sql { get; }
+		public IList<object> Parameters { get; }
+
+		public SqlDescriptor(string sql, IList<object> parameters)
+		{
+			Sql = sql;
+			Parameters = parameters;
+		}
 	}
 
 	public class MoranbernateQueryException : Exception
