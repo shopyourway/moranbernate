@@ -10,16 +10,17 @@ namespace OhioBox.Moranbernate.Querying
 {
 	public static class QueryExt
 	{
-		public static T GetById<T>(this IDbConnection connection, object id)
+		public static T GetById<T>(this IDbConnection connection, object id, Action<string, IList<object>> trackSql = null)
 			where T : class, new()
 		{
 			var generator = CrudOperator<T>.GetById;
 			var parameters = new List<object> { id };
 			var sql = generator.GetSql();
-			return Run<T>(connection, sql, parameters, generator.GetColumns()).FirstOrDefault();
+			
+			return Run<T>(connection, sql, parameters, generator.GetColumns(), trackSql).FirstOrDefault();
 		}
 
-		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null, Action<string> trackSql = null)
+		public static long Count<T>(this IDbConnection connection, Action<IRestrictable<T>> restrictions = null, Action<string, IList<object>> trackSql = null)
 			where T : class, new()
 		{
 			var countByQuery = new CountByQuery<T>();
@@ -27,7 +28,7 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = countByQuery.GetSql(restrictions, parameters);
 
-			trackSql?.Invoke(sql);
+			trackSql?.Invoke(sql, parameters);
 			
 			using (var command = connection.CreateCommand())
 			{
@@ -37,7 +38,7 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string> trackSql = null)
+		public static IEnumerable<T> Query<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string, IList<object>> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
@@ -46,12 +47,10 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
 
-			trackSql?.Invoke(sql);
-
-			return Run<T>(connection, sql, parameters, builder.Properties);
+			return Run<T>(connection, sql, parameters, builder.Properties, trackSql);
 		}
 
-		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string> trackSql = null)
+		public static IEnumerable<QueryResult<T>> QueryAggregated<T>(this IDbConnection connection, Action<IQueryBuilder<T>> query = null, Action<string, IList<object>> trackSql = null)
 			where T : class, new()
 		{
 			var builder = new QueryBuilder<T>();
@@ -62,7 +61,7 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
 
-			trackSql?.Invoke(sql);
+			trackSql?.Invoke(sql, parameters);
 			
 			using (var command = connection.CreateCommand())
 			{
@@ -88,9 +87,11 @@ namespace OhioBox.Moranbernate.Querying
 			}
 		}
 
-		private static IEnumerable<T> Run<T>(IDbConnection connection, string sql, List<object> parameters, IEnumerable<Property> properties)
+		private static IEnumerable<T> Run<T>(IDbConnection connection, string sql, List<object> parameters, IEnumerable<Property> properties, Action<string, IList<object>> trackSql = null)
 			where T : class, new()
 		{
+			trackSql?.Invoke(sql, parameters);
+			
 			using (var command = connection.CreateCommand())
 			{
 				command.CommandText = sql;
