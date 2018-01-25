@@ -28,7 +28,7 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = countByQuery.GetSql(restrictions, parameters);
 
-			trackSql?.Invoke(new SqlDescriptor(sql, parameters));
+			TrackSql(sql, parameters, trackSql);
 			
 			using (var command = connection.CreateCommand())
 			{
@@ -61,7 +61,7 @@ namespace OhioBox.Moranbernate.Querying
 			var parameters = new List<object>();
 			var sql = builder.Build(parameters);
 
-			trackSql?.Invoke(new SqlDescriptor(sql, parameters));
+			TrackSql(sql, parameters, trackSql);
 			
 			using (var command = connection.CreateCommand())
 			{
@@ -90,7 +90,7 @@ namespace OhioBox.Moranbernate.Querying
 		private static IEnumerable<T> Run<T>(IDbConnection connection, string sql, List<object> parameters, IEnumerable<Property> properties, Action<SqlDescriptor> trackSql = null)
 			where T : class, new()
 		{
-			trackSql?.Invoke(new SqlDescriptor(sql, parameters));
+			TrackSql(sql, parameters, trackSql);
 			
 			using (var command = connection.CreateCommand())
 			{
@@ -146,6 +146,15 @@ namespace OhioBox.Moranbernate.Querying
 				throw new Exception("Cannot Create MoranbernateUnableToReadQueryResultException", ex);
 			}
 			throw e;
+		}
+
+		private static void TrackSql(string sql, IList<object> parameters, Action<SqlDescriptor> trackSql)
+		{
+			try
+			{
+				trackSql?.Invoke(new SqlDescriptor(sql, parameters));
+			}
+			catch (Exception) { }
 		}
 	}
 
