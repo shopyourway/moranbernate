@@ -84,12 +84,17 @@ namespace OhioBox.Moranbernate.Tests.QueriesTests
 					AnnoyingInterface = new AnnoyingInterface()
 				});
 
+				SqlDescriptor sqlDescriptor = null;
+				
 				var dto = conn.Query<LocationDto>(
-						q => q.Where(w => w.Equal(x => x.Extra, new[] { 10, 12 }))
+						q => q.Where(w => w.Equal(x => x.Extra, new[] { 10, 12 })),
+						descriptor => sqlDescriptor = descriptor
 					).FirstOrDefault();
 
 				Assert.That(dto.City, Is.EqualTo(city));
-			}
+				Assert.That(sqlDescriptor.Sql, Is.EqualTo("SELECT `Zip`, `City`, `Longitude`, `Latitude`, `Extra`, `AnnoyingInterface` FROM `location` WHERE (`Extra` = ?p0);"));
+				Assert.That(sqlDescriptor.Parameters, Is.EquivalentTo(new [] {"10,12"}));
+		}
 		}
 
 		[Test]
