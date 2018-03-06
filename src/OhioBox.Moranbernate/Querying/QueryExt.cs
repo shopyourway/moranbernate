@@ -176,7 +176,7 @@ namespace OhioBox.Moranbernate.Querying
 #if NETSTANDARD1_4
             return ".Net standard does not support schema investigation. Once it will, this code will be revised";
 #else
-            var mapping = MappingRepoDictionary.GetMappedTypes();
+			var mapping = MappingRepoDictionary.GetMappedTypes();
             var schema = reader.GetSchemaTable();
             var rows = schema?.Rows;
             var tableName = string.Empty;
@@ -208,9 +208,9 @@ namespace OhioBox.Moranbernate.Querying
                 schemaMessage += $", ColumnsNames: {string.Join(",", columns)}";
             }
 
-            return $"\r\nT: {typeof(T).Name},\r\n T-Maps: {mapsMessage},\r\n SQL: {sql},\r\n Parameters: {string.Join(",", parameters)},\r\n Mapping: {mappingMessage},\r\n Schema: {schemaMessage} \r\n ConnectionString: {connection?.ConnectionString}";
+			return $"\r\nT: {typeof(T).Name},\r\n T-Maps: {mapsMessage},\r\n SQL: {sql},\r\n Parameters: {string.Join(",", parameters)},\r\n Mapping: {mappingMessage},\r\n Schema: {schemaMessage} \r\n ConnectionString: {connection?.ConnectionString}";
 #endif
-        }
+		}
     }
 
 }
