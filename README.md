@@ -8,7 +8,7 @@ Moranbernate is a light weight, high performance, high throughput ORM for .Net a
 * Object based mapping and queries
 * Fluent Mapping compatibility - easier to convert from other ORMs
 * Composite keys support
-* .Net Core support - targeting .Net Standard 1.4
+* .Net Core support - targeting .Net Standard 1.4 & 2.0
 
 ## Getting started
 ### Installation
