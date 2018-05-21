@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using OhioBox.Moranbernate.Querying;
 using OhioBox.Moranbernate.Tests.Domain;
 using NUnit.Framework;
