@@ -66,6 +66,41 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 
 			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = ?p0, `SomeString` = ?p1 WHERE (`Id` IN (?p2,?p3,?p4));"));
 			Assert.That(parameters[0], Is.EqualTo(3));
+			Assert.That(parameters[1], Is.EqualTo("there are no strings on me"));
+		}
+
+		[Test]
+		public void Update_WhenUseIncrement_GenerateIncrementQuery()
+		{
+			var parameters = new List<object>();
+			var sql = new UpdateByQuery<SimpleObject>()
+				.GetSql(
+					b => b
+						.Increment(x => x.Long, 3),
+					q => q.In(x => x.Id, new[] { 1L, 2, 3 }),
+					parameters
+				);
+
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = `LongColumnName` + ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
+			Assert.That(parameters[0], Is.EqualTo(3));
+		}
+
+		[Test]
+		public void Update_WhenUseIncrementWithSet_GenerateUpdateQueryAccordingly()
+		{
+			var parameters = new List<object>();
+			var sql = new UpdateByQuery<SimpleObject>()
+				.GetSql(
+					b => b
+						.Set(x => x.SomeString, "there are no strings on me")
+						.Increment(x => x.Long, 3)
+						.Set(x => x.NullableLong, 4),
+					q => q.In(x => x.Id, new[] { 1L, 2, 3 }),
+					parameters
+				);
+
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `SomeString` = ?p0, `LongColumnName` = `LongColumnName` + ?p1, `NullableLong` = ?p2 WHERE (`Id` IN (?p3,?p4,?p5));"));
+			Assert.That(parameters, Is.EqualTo(new object[] { "there are no strings on me", 3, 4, 1, 2, 3 }));
 		}
 	}
 }

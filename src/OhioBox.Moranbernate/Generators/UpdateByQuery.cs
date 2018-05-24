@@ -25,16 +25,11 @@ namespace OhioBox.Moranbernate.Generators
 
 			var properties = builder.GetEnumerable().ToArray();
 
-			if (properties.Any(x => x.Item1.ReadOnly))
+			if (properties.Any(x => x.Property.ReadOnly))
 				throw new UpdateByQueryException("Update by query columns contained at least one read only column");
 
 			var columns = properties
-				.Select(x => {
-					var sql = x.Item1.ColumnName + " = " + _map.CreateParameter("p" + parameters.Count);
-					var value = x.Item1.ConvertValue(x.Item2);
-					parameters.Add(value);
-					return sql;
-				}).ToArray();
+				.Select(x => x.GetSql(_map, parameters)).ToArray();
 
 			var restrictable = new Restrictable<T>();
 			restriction(restrictable);
