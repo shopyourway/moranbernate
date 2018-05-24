@@ -81,7 +81,7 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 					parameters
 				);
 
-			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = `LongColumnName` + ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = IFNULL(`LongColumnName`,0) + ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
 			Assert.That(parameters[0], Is.EqualTo(3));
 		}
 
@@ -99,7 +99,7 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 					parameters
 				);
 
-			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `SomeString` = ?p0, `LongColumnName` = `LongColumnName` + ?p1, `NullableLong` = ?p2 WHERE (`Id` IN (?p3,?p4,?p5));"));
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `SomeString` = ?p0, `LongColumnName` = IFNULL(`LongColumnName`,0) + ?p1, `NullableLong` = ?p2 WHERE (`Id` IN (?p3,?p4,?p5));"));
 			Assert.That(parameters, Is.EqualTo(new object[] { "there are no strings on me", 3, 4, 1, 2, 3 }));
 		}
 	}

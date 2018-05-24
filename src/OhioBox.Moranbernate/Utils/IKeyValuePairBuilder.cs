@@ -72,7 +72,7 @@ namespace OhioBox.Moranbernate.Utils
 
 		public string GetSql<T>(ClassMap<T> map, List<object> parameters) where T : class
 		{
-			var sql = $"{Property.ColumnName} = {Property.ColumnName} + {map.CreateParameter("p" + parameters.Count)}";
+			var sql = $"{Property.ColumnName} = IFNULL({Property.ColumnName},0) + {map.CreateParameter("p" + parameters.Count)}";
 			var value = Property.ConvertValue(_value);
 			parameters.Add(value);
 			return sql;
