@@ -13,38 +13,38 @@ namespace OhioBox.Moranbernate.Utils
 
 	internal class KeyValuePairBuilder<T> : IKeyValuePairBuilder<T>
 	{
-		private readonly List<IUpdatedProperty> _list = new List<IUpdatedProperty>();
+		private readonly List<IPropertyToUpdate> _list = new List<IPropertyToUpdate>();
 		
 		public IKeyValuePairBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value)
 		{
-			var settableProperty = new ValueUpdatedProperty(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
+			var settableProperty = new PropertyToSet(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
 			_list.Add(settableProperty);
 			return this;
 		}
 
 		public IKeyValuePairBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value)
 		{
-			var incrementableProperty = new ValueIncrementedProperty(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
+			var incrementableProperty = new PropertyToIncrement(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
 			_list.Add(incrementableProperty);
 
 			return this;
 		}
 
-		public IList<IUpdatedProperty> GetEnumerable() => _list;
+		public IList<IPropertyToUpdate> GetEnumerable() => _list;
 	}
 
-	internal interface IUpdatedProperty
+	internal interface IPropertyToUpdate
 	{
 		Property Property { get; }
 		string GetSql<T>(ClassMap<T> map, List<object> parameters) where T:class;
 	}
 
-	internal class ValueUpdatedProperty : IUpdatedProperty
+	internal class PropertyToSet : IPropertyToUpdate
 	{
 		public Property Property { get; }
 		private readonly object _value;
 
-		public ValueUpdatedProperty(Property property, object value)
+		public PropertyToSet(Property property, object value)
 		{
 			Property = property;
 			_value = value;
@@ -59,12 +59,12 @@ namespace OhioBox.Moranbernate.Utils
 		}
 	}
 
-	internal class ValueIncrementedProperty : IUpdatedProperty
+	internal class PropertyToIncrement : IPropertyToUpdate
 	{
 		public Property Property { get; }
 		private readonly object _value;
 
-		public ValueIncrementedProperty(Property property, object value)
+		public PropertyToIncrement(Property property, object value)
 		{
 			Property = property;
 			_value = value;
