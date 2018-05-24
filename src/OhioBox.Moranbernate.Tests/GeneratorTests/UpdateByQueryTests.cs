@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OhioBox.Moranbernate.Generators;
 using OhioBox.Moranbernate.Tests.Domain;
 using NUnit.Framework;
@@ -50,6 +49,23 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 					new List<object>()
 				)
 			);
+		}
+
+		[Test]
+		public void Update_WhenUpdateMultipleFields_GenerateUpdateQueryWithMutlipleSetStatements()
+		{
+			var parameters = new List<object>();
+			var sql = new UpdateByQuery<SimpleObject>()
+				.GetSql(
+					b => b
+						.Set(x => x.Long, 3)
+						.Set(x => x.SomeString, "there are no strings on me"),
+					q => q.In(x => x.Id, new[] { 1L, 2, 3 }),
+					parameters
+				);
+
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = ?p0, `SomeString` = ?p1 WHERE (`Id` IN (?p2,?p3,?p4));"));
+			Assert.That(parameters[0], Is.EqualTo(3));
 		}
 	}
 }
