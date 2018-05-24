@@ -82,7 +82,7 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 				);
 
 			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = IFNULL(`LongColumnName`,0) + ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
-			Assert.That(parameters[0], Is.EqualTo(3));
+			Assert.That(parameters, Is.EqualTo(new object[] { 3, 1, 2, 3 }));
 		}
 
 		[Test]
@@ -101,6 +101,22 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 
 			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `SomeString` = ?p0, `LongColumnName` = IFNULL(`LongColumnName`,0) + ?p1, `NullableLong` = ?p2 WHERE (`Id` IN (?p3,?p4,?p5));"));
 			Assert.That(parameters, Is.EqualTo(new object[] { "there are no strings on me", 3, 4, 1, 2, 3 }));
+		}
+
+		[Test]
+		public void Update_WhenDecrementingField_DecrementFieldValue()
+		{
+			var parameters = new List<object>();
+			var sql = new UpdateByQuery<SimpleObject>()
+				.GetSql(
+					b => b
+						.Decrement(x => x.Long, 3),
+					q => q.In(x => x.Id, new[] { 1L, 2, 3 }),
+					parameters
+				);
+
+			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = IFNULL(`LongColumnName`,0) - ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
+			Assert.That(parameters[0], Is.EqualTo(3));
 		}
 	}
 }
