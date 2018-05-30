@@ -84,6 +84,21 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 		}
 
 		[Test]
+		public void QueryBuilder_Build_RegexMatch()
+		{
+			const string param = "[a-z]+";
+			var parameters = new List<object>();
+			var query = new QueryBuilder<SimpleObject>();
+
+			query.Where(w => w.RegexMatch(x => x.SomeString, param));
+
+			var sql = query.Build(parameters);
+
+			Assert.AreEqual("SELECT `Id`, `LongColumnName`, `SomeString`, `NullableLong`, `Guid`, `NullableGuid`, `IntBasedEnum`, `NullableIntBasedEnum` FROM `table_name` WHERE (`SomeString` REGEX ?p0);", sql);
+			Assert.That(parameters[0], Is.EqualTo(param));
+		}
+
+		[Test]
 		public void TestPaging_FirstPage()
 		{
 			var parameters = new List<object>();

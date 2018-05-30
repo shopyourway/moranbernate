@@ -99,6 +99,11 @@ namespace OhioBox.Moranbernate.Querying
 			return restrictable.AddRestriction(new OperatorRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), "%" + value + "%", "NOT LIKE"));
 		}
 
+		public static IRestrictable<T> RegexMatch<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string pattern)
+		{
+			return restrictable.AddRestriction(new RegexRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), pattern));
+		}
+
 		private static IRestrictable<T> LikeActions<T>(IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
 		{
 			return restrictable.AddRestriction(new OperatorRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), value , "LIKE"));
