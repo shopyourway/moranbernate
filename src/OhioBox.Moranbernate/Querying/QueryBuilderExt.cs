@@ -79,29 +79,34 @@ namespace OhioBox.Moranbernate.Querying
 			return restrictable.AddRestriction(new IsNullRestriction(ExpressionProcessor<T>.GetPropertyFromCache(member), not:true));
 		}
 
-		public static IRestrictable<T> Contains<T>(this IRestrictable<T> restrictable, Expression<Func<T, object>> member, string value)
+		public static IRestrictable<T> Contains<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
 		{
 			return LikeActions(restrictable, member, "%" + value + "%");
 		}
 
-		public static IRestrictable<T> StartWith<T>(this IRestrictable<T> restrictable, Expression<Func<T, object>> member, string value)
+		public static IRestrictable<T> StartWith<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
 		{
 			return LikeActions(restrictable, member, value + "%");
 		}
 
-		public static IRestrictable<T> EndWith<T>(this IRestrictable<T> restrictable, Expression<Func<T, object>> member, string value)
+		public static IRestrictable<T> EndWith<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
 		{
 			return LikeActions(restrictable, member, "%" + value);
 		}
 
-		public static IRestrictable<T> NotLike<T>(this IRestrictable<T> restrictable, Expression<Func<T, object>> member, string value)
+		public static IRestrictable<T> NotLike<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
 		{
-			return restrictable.AddRestriction(new OperatorRestriction<object>(ExpressionProcessor<T>.GetPropertyFromCache(member), "%" + value + "%", "NOT LIKE"));
+			return restrictable.AddRestriction(new OperatorRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), "%" + value + "%", "NOT LIKE"));
 		}
 
-		private static IRestrictable<T> LikeActions<T>(IRestrictable<T> restrictable, Expression<Func<T, object>> member, string value)
+		public static IRestrictable<T> RegexMatch<T>(this IRestrictable<T> restrictable, Expression<Func<T, string>> member, string pattern)
 		{
-			return restrictable.AddRestriction(new OperatorRestriction<object>(ExpressionProcessor<T>.GetPropertyFromCache(member), value , "LIKE"));
+			return restrictable.AddRestriction(new RegexRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), pattern));
+		}
+
+		private static IRestrictable<T> LikeActions<T>(IRestrictable<T> restrictable, Expression<Func<T, string>> member, string value)
+		{
+			return restrictable.AddRestriction(new OperatorRestriction<string>(ExpressionProcessor<T>.GetPropertyFromCache(member), value , "LIKE"));
 		}
 	}
 }
