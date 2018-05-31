@@ -49,7 +49,7 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 			var parameters = new List<object>();
 			var sql = res.Apply(parameters, map.Dialect);
 
-			Assert.AreEqual("`LongColumnName` REGEX ?p0", sql);
+			Assert.AreEqual("`LongColumnName` REGEXP ?p0", sql);
 			Assert.AreEqual("[a-zA-Z]+", parameters[0]);
 		}
 	}

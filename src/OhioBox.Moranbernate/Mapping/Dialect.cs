@@ -35,7 +35,7 @@ namespace OhioBox.Moranbernate.Mapping
 
 		public string RegexMatch(string expr, string pattern)
 		{
-			return $"{expr} REGEX {pattern}";
+			return $"{expr} REGEXP {pattern}";
 		}
 	}
 

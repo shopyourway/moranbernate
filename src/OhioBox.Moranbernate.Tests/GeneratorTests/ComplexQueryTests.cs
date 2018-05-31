@@ -94,7 +94,7 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 
 			var sql = query.Build(parameters);
 
-			Assert.AreEqual("SELECT `Id`, `LongColumnName`, `SomeString`, `NullableLong`, `Guid`, `NullableGuid`, `IntBasedEnum`, `NullableIntBasedEnum` FROM `table_name` WHERE (`SomeString` REGEX ?p0);", sql);
+			Assert.AreEqual("SELECT `Id`, `LongColumnName`, `SomeString`, `NullableLong`, `Guid`, `NullableGuid`, `IntBasedEnum`, `NullableIntBasedEnum` FROM `table_name` WHERE (`SomeString` REGEXP ?p0);", sql);
 			Assert.That(parameters[0], Is.EqualTo(param));
 		}
 
