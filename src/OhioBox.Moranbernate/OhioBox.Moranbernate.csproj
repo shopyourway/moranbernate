@@ -5,7 +5,7 @@
     <PackageId>OhioBox.Moranbernate</PackageId>
     <BuildNumber>0</BuildNumber>
     <PackageVersionSuffix>-dev</PackageVersionSuffix>
-    <AssemblyVersion>5.1.$(BuildNumber)</AssemblyVersion>
+    <AssemblyVersion>5.2.$(BuildNumber)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <PackageVersion>$(AssemblyVersion)$(PackageVersionSuffix)</PackageVersion>
     <Authors>Sears Israel</Authors>
