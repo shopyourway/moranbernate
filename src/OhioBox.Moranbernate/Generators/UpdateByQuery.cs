@@ -22,6 +22,8 @@ namespace OhioBox.Moranbernate.Generators
 		{
 			var builder = new UpdateStatementBuilder<T>();
 			action(builder);
+			if (builder.HasNoStatements())
+				throw new UpdateByQueryException("Can not update without update statements. Please add SET statements");
 
 			var properties = builder.GetEnumerable().ToArray();
 

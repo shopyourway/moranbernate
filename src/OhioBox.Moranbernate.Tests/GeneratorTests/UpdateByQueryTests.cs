@@ -118,5 +118,16 @@ namespace OhioBox.Moranbernate.Tests.GeneratorTests
 			Assert.That(sql, Is.EqualTo("UPDATE `table_name` SET `LongColumnName` = IFNULL(`LongColumnName`,0) - ?p0 WHERE (`Id` IN (?p1,?p2,?p3));"));
 			Assert.That(parameters[0], Is.EqualTo(3));
 		}
+
+		[Test]
+		public void Update_WhenTryingToUpdateWithoutStatements_ThrowException()
+		{
+			var parameters = new List<object>();
+			Assert.Throws<UpdateByQueryException>(() => new UpdateByQuery<SimpleObject>()
+				.GetSql(u => {},
+					q => q.In(x => x.Id, new[] { 1L, 2, 3 }),
+					parameters
+				));
+		}
 	}
 }

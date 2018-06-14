@@ -10,6 +10,8 @@ namespace OhioBox.Moranbernate.Utils
 		IUpdateStatementBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value);
 		IUpdateStatementBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value);
 		IUpdateStatementBuilder<T> Decrement<TValue>(Expression<Func<T, TValue>> expression, TValue value);
+
+		bool HasNoStatements();
 	}
 
 	internal class UpdateStatementBuilder<T> : IUpdateStatementBuilder<T>
@@ -38,6 +40,11 @@ namespace OhioBox.Moranbernate.Utils
 			_statements.Add(incrementableProperty);
 
 			return this;
+		}
+
+		public bool HasNoStatements()
+		{
+			return _statements.Count == 0;
 		}
 	}
 
