@@ -95,7 +95,7 @@ namespace OhioBox.Moranbernate.Utils
 			return AttachParamsAndRun(connection, sql, parameters);
 		}
 
-		public static int UpdateByQuery<T>(this IDbConnection connection, Action<IKeyValuePairBuilder<T>> builder, Action<IRestrictable<T>> restriction)
+		public static int UpdateByQuery<T>(this IDbConnection connection, Action<IUpdateStatementBuilder<T>> builder, Action<IRestrictable<T>> restriction)
 			where T : class
 		{
 			var parameters = new List<object>();

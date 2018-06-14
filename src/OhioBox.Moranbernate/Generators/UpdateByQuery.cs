@@ -18,10 +18,12 @@ namespace OhioBox.Moranbernate.Generators
 
 		}
 
-		public string GetSql(Action<IKeyValuePairBuilder<T>> action, Action<IRestrictable<T>> restriction, List<object> parameters)
+		public string GetSql(Action<IUpdateStatementBuilder<T>> action, Action<IRestrictable<T>> restriction, List<object> parameters)
 		{
-			var builder = new KeyValuePairBuilder<T>();
+			var builder = new UpdateStatementBuilder<T>();
 			action(builder);
+			if (builder.HasNoStatements())
+				throw new UpdateByQueryException("Can not update without update statements. Please add SET statements");
 
 			var properties = builder.GetEnumerable().ToArray();
 

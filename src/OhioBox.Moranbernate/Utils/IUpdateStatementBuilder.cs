@@ -5,42 +5,47 @@ using OhioBox.Moranbernate.Mapping;
 
 namespace OhioBox.Moranbernate.Utils
 {
-	public interface IKeyValuePairBuilder<T>
+	public interface IUpdateStatementBuilder<T>
 	{
-		IKeyValuePairBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value);
-		IKeyValuePairBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value);
-		IKeyValuePairBuilder<T> Decrement<TValue>(Expression<Func<T, TValue>> expression, TValue value);
+		IUpdateStatementBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value);
+		IUpdateStatementBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value);
+		IUpdateStatementBuilder<T> Decrement<TValue>(Expression<Func<T, TValue>> expression, TValue value);
+
+		bool HasNoStatements();
 	}
 
-	internal class KeyValuePairBuilder<T> : IKeyValuePairBuilder<T>
+	internal class UpdateStatementBuilder<T> : IUpdateStatementBuilder<T>
 	{
-		private readonly List<IPropertyToUpdate> _list = new List<IPropertyToUpdate>();
-		public IList<IPropertyToUpdate> GetEnumerable() => _list;
+		private readonly List<IPropertyToUpdate> _statements = new List<IPropertyToUpdate>();
+		public IList<IPropertyToUpdate> GetEnumerable() => _statements;
 
-		public IKeyValuePairBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value)
+		public IUpdateStatementBuilder<T> Set<TValue>(Expression<Func<T, TValue>> expression, TValue value)
 		{
 			var settableProperty = new PropertyToSet(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
-			_list.Add(settableProperty);
+			_statements.Add(settableProperty);
 			return this;
 		}
 
-		public IKeyValuePairBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value)
+		public IUpdateStatementBuilder<T> Increment<TValue>(Expression<Func<T, TValue>> expression, TValue value)
 		{
 			var incrementableProperty = new PropertyToIncrement(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
-			_list.Add(incrementableProperty);
+			_statements.Add(incrementableProperty);
 
 			return this;
 		}
 
-		public IKeyValuePairBuilder<T> Decrement<TValue>(Expression<Func<T, TValue>> expression, TValue value)
+		public IUpdateStatementBuilder<T> Decrement<TValue>(Expression<Func<T, TValue>> expression, TValue value)
 		{
 			var incrementableProperty = new PropertyToDecrement(ExpressionProcessor<T>.GetPropertyFromCache(expression), value);
-			_list.Add(incrementableProperty);
+			_statements.Add(incrementableProperty);
 
 			return this;
 		}
 
-
+		public bool HasNoStatements()
+		{
+			return _statements.Count == 0;
+		}
 	}
 
 	internal interface IPropertyToUpdate
