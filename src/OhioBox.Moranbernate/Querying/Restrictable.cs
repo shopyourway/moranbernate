@@ -8,27 +8,30 @@ namespace OhioBox.Moranbernate.Querying
 	public interface IRestrictable<T>
 	{
 		IRestrictable<T> AddRestriction(IRestriction restriction);
+		bool NoRestrictions();
 	}
 
 	internal class Restrictable<T> : IRestrictable<T>
 	{
-		private IList<IRestriction> Restrictions { get; set; }
+		private readonly IList<IRestriction> _restrictions = new List<IRestriction>();
 
 		public IRestrictable<T> AddRestriction(IRestriction restriction)
 		{
-			if (Restrictions == null)
-				Restrictions = new List<IRestriction>();
-
-			Restrictions.Add(restriction);
+			_restrictions.Add(restriction);
 			return this;
+		}
+
+		public bool NoRestrictions()
+		{
+			return _restrictions == null || _restrictions.Count == 0;
 		}
 
 		internal string BuildRestrictions(List<object> parameters, IDialect map)
 		{
-			if (Restrictions == null || Restrictions.Count == 0)
+			if (_restrictions == null || _restrictions.Count == 0)
 				return null;
 
-			var junction = Restrictions.Select(r => r.Apply(parameters, map));
+			var junction = _restrictions.Select(r => r.Apply(parameters, map));
 
 			return "(" + string.Join(" AND ", junction) + ")";
 		}
