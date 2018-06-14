@@ -18,9 +18,9 @@ namespace OhioBox.Moranbernate.Generators
 
 		}
 
-		public string GetSql(Action<IKeyValuePairBuilder<T>> action, Action<IRestrictable<T>> restriction, List<object> parameters)
+		public string GetSql(Action<IUpdateStatementBuilder<T>> action, Action<IRestrictable<T>> restriction, List<object> parameters)
 		{
-			var builder = new KeyValuePairBuilder<T>();
+			var builder = new UpdateStatementBuilder<T>();
 			action(builder);
 
 			var properties = builder.GetEnumerable().ToArray();
