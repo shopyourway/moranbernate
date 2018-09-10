@@ -9,7 +9,7 @@ namespace OhioBox.Moranbernate.Utils
 		public static void Initialize(Assembly[] assemblies, ILogger[] loggers)
 		{
 			MappingRepoDictionary.InitializeAssemblies(assemblies);
-			LoggingRepo.InitializeLogger(  	loggers);
+			LoggingRepo.InitializeLogger(loggers);
 		}
 	}
 }
