@@ -1,6 +1,6 @@
 ﻿namespace OhioBox.Moranbernate.Logging
 {
-	public interface ILogger
+	public interface IQueryLogger
 	{
 		
 	}

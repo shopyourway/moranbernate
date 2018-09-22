@@ -6,10 +6,10 @@ namespace OhioBox.Moranbernate.Utils
 {
 	public class MoranbernateInitializer
 	{
-		public static void Initialize(Assembly[] assemblies, ILogger[] loggers)
+		public static void Initialize(Assembly[] assemblies, IQueryLogger[] queryLoggers)
 		{
 			MappingRepoDictionary.InitializeAssemblies(assemblies);
-			LoggingRepo.InitializeLogger(loggers);
+			QueryLoggingRepo.InitializeLogger(queryLoggers);
 		}
 	}
 }
