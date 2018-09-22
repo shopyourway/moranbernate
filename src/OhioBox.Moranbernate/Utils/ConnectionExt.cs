@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using OhioBox.Moranbernate.Generators;
+using OhioBox.Moranbernate.Logging;
 using OhioBox.Moranbernate.Mapping;
 using OhioBox.Moranbernate.Querying;
 
@@ -74,7 +76,7 @@ namespace OhioBox.Moranbernate.Utils
 					map.Identifiers[0].SetValue(t, id);
 					return t;
 				}
-				command.ExecuteNonQuery();
+				CommandRunner.ExecuteCommandAndLog(command);
 			}
 
 			return t;
@@ -145,10 +147,12 @@ namespace OhioBox.Moranbernate.Utils
 		{
 			using (var command = connection.CreateCommand())
 			{
-				command.CommandText = sql;
-				command.AttachPositionalParameters(parameters);
-				return command.ExecuteNonQuery();
+					command.CommandText = sql;
+					command.AttachPositionalParameters(parameters);
+
+					return CommandRunner.ExecuteCommandAndLog(command);
 			}
+			
 		}
 	}
 }
