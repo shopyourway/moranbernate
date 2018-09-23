@@ -48,7 +48,7 @@ namespace OhioBox.Moranbernate.Querying
 
 			var parameters = dbParameters
 				.Cast<IDbDataParameter>()
-				.Select(p => $"{p.ParameterName} : {p.Value}")
+				.Select(p => $"{p.ParameterName}: {p.Value}")
 				.ToArray();
 			
 			return parameters;
