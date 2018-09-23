@@ -2,15 +2,15 @@
 {
 	public class QueryPerformanceLog
 	{
-		private readonly string _query;
-		private readonly string[] _parameters;
-		private readonly double _miliseconds;
+		public readonly string Query;
+		public readonly string[] Parameters;
+		public readonly double MiliSeconds;
 
-		public QueryPerformanceLog(string query, string[] parameters,double miliseconds)
+		public QueryPerformanceLog(string query, string[] parameters,double miliSeconds)
 		{
-			_query = query;
-			_parameters = parameters;
-			_miliseconds = miliseconds;
+			Query = query;
+			Parameters = parameters;
+			MiliSeconds = miliSeconds;
 		}
 	}
 }
