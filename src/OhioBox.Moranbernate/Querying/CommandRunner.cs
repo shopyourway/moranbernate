@@ -18,32 +18,42 @@ namespace OhioBox.Moranbernate.Querying
 				stopWatch.Stop();
 				var queryTime = stopWatch.ElapsedMilliseconds;
 
-				logQuery(command, queryTime);
+				LogQuery(command, queryTime);
 				return rowsAffected;
 			}
 			catch (Exception e)
 			{
 				stopWatch.Stop();
-				logQuery(command, stopWatch.ElapsedMilliseconds, e);
+				LogQuery(command, stopWatch.ElapsedMilliseconds, e);
 				throw;
 			}
-
 		}
 
-		private static void logQuery(IDbCommand command, long queryTime, Exception e = null)
+		private static void LogQuery(IDbCommand command, long queryTime, Exception e = null)
 		{
 			var query = command.CommandText;
-			var parameters = command.Parameters
+			
+			var parameters = ExtractParameterValues(command);
+
+			var queryLog = new QueryPerformanceLog(query, parameters, queryTime);
+			QueryLoggingRepo.LogQuery(queryLog, e);
+		}
+
+		private static string[] ExtractParameterValues(IDbCommand command)
+		{
+			var dbParameters = command.Parameters;
+
+			if (dbParameters == null || dbParameters.Count == 0)
+				return new string[0];
+
+			var parameters = dbParameters
 				.Cast<IDbDataParameter>()
-				.Select(p => p.Value.ToString())
+				.Select(p => (p.Value != null) ? 
+					p.Value.ToString() 
+					:"null")
 				.ToArray();
 			
-			var queryLog = new QueryPerformanceLog(query, parameters, queryTime);
-			
-//			if (e != null)
-//				QueryLoggingRepo.LogFailedQuery(queryLog, e);
-
-			QueryLoggingRepo.LogQuery(queryLog);
+			return parameters;
 		}
 	}
 }

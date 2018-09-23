@@ -1,4 +1,6 @@
-﻿namespace OhioBox.Moranbernate.Logging
+﻿using System;
+
+namespace OhioBox.Moranbernate.Logging
 {
 	public static class QueryLoggingRepo
 	{
@@ -9,14 +11,17 @@
 			_queryLoggers = queryLoggers;
 		}
 
-		public static void LogQuery(QueryPerformanceLog queryLog)
+		public static void LogQuery(QueryPerformanceLog queryLog, Exception e = null)
 		{
-			if (_queryLoggers == null || _queryLoggers.Length == 0)
+			if (_queryLoggers == null || _queryLoggers.Length == 0 || queryLog == null)
 				return;
 
-			foreach (var log in _queryLoggers)
+			foreach (var logger in _queryLoggers)
 			{
-
+				if (e != null)
+					logger.LogFailedQuery(queryLog, e);
+				
+				logger.LogSuccesfulQuery(queryLog);
 			}
 		}
 	}
