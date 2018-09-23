@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using OhioBox.Moranbernate.Logging;
@@ -8,18 +9,18 @@ namespace OhioBox.Moranbernate.Querying
 {
 	public static class CommandRunner
 	{
-		public static int ExecuteCommandAndLog(IDbCommand command)
+		public static T ExecuteCommandAndLog<T>(IDbCommand command, Func<IDbCommand,T> function)
 		{
 			var stopWatch = new Stopwatch();
 			try
 			{
 				stopWatch.Start();
-				var rowsAffected = command.ExecuteNonQuery();
+				var commandResult = function(command);
 				stopWatch.Stop();
 				var queryTime = stopWatch.ElapsedMilliseconds;
 
 				LogQuery(command, queryTime);
-				return rowsAffected;
+				return commandResult;
 			}
 			catch (Exception e)
 			{

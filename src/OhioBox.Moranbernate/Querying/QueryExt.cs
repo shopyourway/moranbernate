@@ -31,7 +31,7 @@ namespace OhioBox.Moranbernate.Querying
 			{
 				command.CommandText = sql;
 				command.AttachPositionalParameters(parameters);
-				return (long)command.ExecuteScalar();
+				return (long)CommandRunner.ExecuteCommandAndLog(command, c => c.ExecuteScalar());
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace OhioBox.Moranbernate.Querying
 				command.AttachPositionalParameters(parameters);
 				var properties = builder.Properties.ToArray();
 
-				using (var reader = command.ExecuteReader())
+				using (var reader = CommandRunner.ExecuteCommandAndLog(command, c => c.ExecuteReader()))
 				{
 					while (reader.Read())
 					{
@@ -95,7 +95,7 @@ namespace OhioBox.Moranbernate.Querying
 				IDataReader reader;
 				try
 				{
-					reader = command.ExecuteReader();
+					reader = CommandRunner.ExecuteCommandAndLog(command, c => c.ExecuteReader());
 				}
 				catch (Exception ex)
 				{

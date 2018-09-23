@@ -21,7 +21,8 @@ namespace OhioBox.Moranbernate.Logging
 				if (e != null)
 					logger.LogFailedQuery(queryLog, e);
 				
-				logger.LogSuccesfulQuery(queryLog);
+				else
+					logger.LogSuccesfulQuery(queryLog);
 			}
 		}
 	}

@@ -7,7 +7,7 @@ namespace OhioBox.Moranbernate.Tests.LoggingTests
 {
 	public class TestingLogger : IQueryLogger
 	{
-		public IList<String> Log;
+		public IList<string> Log = new List<string>();
 		public void LogFailedQuery(QueryPerformanceLog queryLog, Exception exception)
 		{
 			Log.Add("Query: " + queryLog.Query);
